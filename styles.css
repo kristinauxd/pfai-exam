@@ -117,8 +117,39 @@ select {
     padding: 20px;
     border: 1px solid var(--border-color);
     display: flex;
-    flex-direction: column;
+}
+
+.chart-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.y-axis-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    margin-right: 15px;
+}
+
+.chart-inner-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.x-axis-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--text-secondary);
 }
 
 .stats-container {
@@ -224,14 +255,16 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Dummy Chart */
 .dummy-chart {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 100%;
     justify-content: space-between;
     position: relative;
     padding-left: 20px;
+    padding-bottom: 10px;
     border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .chart-row {
