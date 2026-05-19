@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Chart Area
     const chartArea = document.getElementById('chart-area');
     const xAxis = document.getElementById('x-axis');
+    const tooltip = document.getElementById('chart-tooltip');
 
     function calculate() {
         const revenue = parseFloat(revenueInput.value) || 0;
@@ -101,6 +102,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const cBar = document.createElement('div');
             cBar.className = 'c-bar c-customers';
             cBar.style.width = `${(monthC / Math.max(totalProspects, 1)) * 100}%`;
+
+            // Tooltip events
+            barGroup.addEventListener('mouseenter', (e) => {
+                tooltip.style.opacity = '1';
+                tooltip.innerHTML = `Month #${i}<br>Prospects: ${monthP}<br>Leads: ${monthL}<br>Customers: ${monthC}`;
+            });
+
+            barGroup.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 15 + 'px';
+                tooltip.style.top = e.clientY + 'px';
+            });
+
+            barGroup.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
 
             barGroup.appendChild(pBar);
             barGroup.appendChild(lBar);
