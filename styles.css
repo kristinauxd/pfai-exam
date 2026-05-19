@@ -293,8 +293,49 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: 2px;
     top: 0;
     left: 0;
+    cursor: pointer;
 }
 
 .c-prospects { background-color: #334155; z-index: 1; }
 .c-leads { background-color: #475569; z-index: 2; }
 .c-customers { background-color: #94A3B8; z-index: 3; }
+
+/* Tooltip */
+.chart-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background-color: #475569;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    transform: translateY(-50%);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.chart-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent var(--accent) transparent transparent;
+}
+
+.chart-tooltip::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px 5px 5px 0;
+    border-style: solid;
+    border-color: transparent #475569 transparent transparent;
+}
