@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Chart Area
     const chartArea = document.getElementById('chart-area');
+    const xAxis = document.getElementById('x-axis');
 
     function calculate() {
         const revenue = parseFloat(revenueInput.value) || 0;
@@ -108,6 +109,21 @@ document.addEventListener('DOMContentLoaded', () => {
             row.appendChild(label);
             row.appendChild(barGroup);
             chartArea.appendChild(row);
+        }
+
+        // Render X-axis
+        if (xAxis) {
+            xAxis.innerHTML = '';
+            const segments = 6;
+            const rawStep = totalProspects / segments;
+            let step = Math.ceil(rawStep / 10) * 10;
+            if (step === 0) step = 10;
+
+            for(let i=0; i<=segments; i++) {
+                const labelSpan = document.createElement('span');
+                labelSpan.textContent = `${i * step} people`;
+                xAxis.appendChild(labelSpan);
+            }
         }
     }
 
