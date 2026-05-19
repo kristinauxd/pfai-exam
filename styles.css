@@ -113,7 +113,7 @@ select {
 .top-section {
     display: flex;
     gap: 20px;
-    height: 60%;
+    flex: 1;
 }
 
 .chart-container {
