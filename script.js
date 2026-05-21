@@ -27,6 +27,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const xAxis = document.getElementById('x-axis');
     const tooltip = document.getElementById('chart-tooltip');
 
+    // Number animation state
+    let targetProspects = 0, targetLeads = 0, targetCustomers = 0;
+    
+    // Animate numbers smoothly
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.textContent = Math.floor(progress * (end - start) + start);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
     function calculate() {
         const revenue = parseFloat(revenueInput.value) || 0;
         const aov = parseFloat(aovInput.value) || 1; // prevent div zero
@@ -38,19 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
         leadRateVal.textContent = leadResponseRate.toFixed(2);
         prospectRateVal.textContent = prospectResponseRate.toFixed(2);
 
-        // Formula 01: Customers = Revenue / AOV
+        // Calculate targets
         const customers = Math.round(revenue / aov);
-
-        // Formula 02: Leads = Customers * 100 / Lead Response Rate
         const leads = Math.round((customers * 100) / leadResponseRate);
-
-        // Formula 03: Prospects = Leads * 100 / Prospect Response Rate
         const prospects = Math.round((leads * 100) / prospectResponseRate);
 
-        // Update DOM values
-        valProspects.textContent = prospects;
-        valLeads.textContent = leads;
-        valCustomers.textContent = customers;
+        // Animate numbers if they changed
+        if (customers !== targetCustomers) animateValue(valCustomers, targetCustomers, customers, 500);
+        if (leads !== targetLeads) animateValue(valLeads, targetLeads, leads, 500);
+        if (prospects !== targetProspects) animateValue(valProspects, targetProspects, prospects, 500);
+
+        targetCustomers = customers;
+        targetLeads = leads;
+        targetProspects = prospects;
 
         // Calculate Percentages (Prospects is 100%)
         const pPct = 100;
@@ -61,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pctLeads.textContent = `${lPct}%`;
         pctCustomers.textContent = `${cPct}%`;
 
+        // Update main progress bars smoothly via CSS
         barProspects.style.width = `100%`;
         barLeads.style.width = `${lPct}%`;
         barCustomers.style.width = `${cPct}%`;
@@ -72,9 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chartArea.innerHTML = '';
         const months = 6;
         
-        // Simple linear distribution simulation for the chart
-        let currentP = 0, currentL = 0, currentC = 0;
-
         for(let i=1; i<=months; i++) {
             const row = document.createElement('div');
             row.className = 'chart-row';
@@ -93,29 +108,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const pBar = document.createElement('div');
             pBar.className = 'c-bar c-prospects';
-            pBar.style.width = `${(monthP / Math.max(totalProspects, 1)) * 100}%`;
+            // Defer width to trigger transition
+            setTimeout(() => { pBar.style.width = `${(monthP / Math.max(totalProspects, 1)) * 100}%`; }, 10);
 
             const lBar = document.createElement('div');
             lBar.className = 'c-bar c-leads';
-            lBar.style.width = `${(monthL / Math.max(totalProspects, 1)) * 100}%`;
+            setTimeout(() => { lBar.style.width = `${(monthL / Math.max(totalProspects, 1)) * 100}%`; }, 10);
 
             const cBar = document.createElement('div');
             cBar.className = 'c-bar c-customers';
-            cBar.style.width = `${(monthC / Math.max(totalProspects, 1)) * 100}%`;
+            setTimeout(() => { cBar.style.width = `${(monthC / Math.max(totalProspects, 1)) * 100}%`; }, 10);
 
-            // Tooltip events
-            barGroup.addEventListener('mouseenter', (e) => {
-                tooltip.style.opacity = '1';
-                tooltip.innerHTML = `Month #${i}<br>Prospects: ${monthP}<br>Leads: ${monthL}<br>Customers: ${monthC}`;
+            // Microinteractions Tooltip Events
+            barGroup.addEventListener('mouseenter', () => {
+                tooltip.classList.add('active');
+                tooltip.innerHTML = `<strong>Month #${i}</strong><hr style="border-color: rgba(255,255,255,0.1); margin: 5px 0;">Prospects: <span style="color: #cbd5e1">${monthP}</span><br>Leads: <span style="color: #cbd5e1">${monthL}</span><br>Customers: <span style="color: #cbd5e1">${monthC}</span>`;
             });
 
             barGroup.addEventListener('mousemove', (e) => {
-                tooltip.style.left = e.clientX + 15 + 'px';
+                tooltip.style.left = e.clientX + 20 + 'px';
                 tooltip.style.top = e.clientY + 'px';
             });
 
             barGroup.addEventListener('mouseleave', () => {
-                tooltip.style.opacity = '0';
+                tooltip.classList.remove('active');
             });
 
             barGroup.appendChild(pBar);
@@ -127,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chartArea.appendChild(row);
         }
 
-        // Render X-axis
+        // Render X-axis smoothly
         if (xAxis) {
             xAxis.innerHTML = '';
             const segments = 6;
@@ -137,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for(let i=0; i<=segments; i++) {
                 const labelSpan = document.createElement('span');
-                labelSpan.textContent = `${i * step} people`;
+                labelSpan.textContent = `${i * step}`;
                 xAxis.appendChild(labelSpan);
             }
         }
